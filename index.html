@@ -242,6 +242,17 @@ if(!sessionStorage.getItem('hi')){try{sessionStorage.setItem('hi',1)}catch(e){}s
 const hist=[];
 function addM(t,c){const e=document.createElement('div');e.className='m '+c;e.textContent=t;$('#msgs').appendChild(e);$('#msgs').scrollTop=1e9;return e}
 function brain(q){const s=q.toLowerCase(),now=Date.now(),act=tasks.filter(t=>!t.done).sort((a,b)=>b.pri-a.pri||a.due-b.due),late=act.filter(t=>t.due<now),L=t=>`• ${t.title} (${fmt(t.due-now)}${t.due<now?' overdue':' left'})`;
+ let m=s.match(/^(?:please )?(?:add|create|remind me to|new task)\s+(?:a task |task )?(.+?)(?:\s+in\s+(\d+)\s*(min|mins|minutes?|hours?|hrs?|h)\b)?$/);
+ if(m&&m[1]){const mins=m[2]?(/^h/.test(m[3])?m[2]*60:+m[2]):60,st=Date.now(),i=s.indexOf(m[1]),title=q.trim().slice(i,i+m[1].length);tasks.push({id:st,title,start:st,due:st+mins*60000,pri:2,done:false});save();fresh=st;render();return `Added "${title}" with ${mins>=60?(mins/60)+' hour(s)':mins+' minutes'} on the clock. I'll bark when time is close! 🐾`}
+ if(/thank|thx/.test(s))return "You're welcome! Woof! 🐶";
+ if(/how are you|how r u|what'?s up|sup\b/.test(s))return "I'm great, tail wagging nonstop! 🐕 What are we tackling today?";
+ if(/your name|who are you/.test(s))return "I'm Lilly, Abi's puppy and to-do buddy. I remind you, cheer you on, and help you plan! 🐾";
+ if(/joke|funny/.test(s)){const j=["Why did the puppy sit in the shade? Because she didn't want to be a hot dog! 🌭","What do you call a dog that does magic? A Labracadabrador! 🎩","Why did the to-do list go to therapy? Too many unresolved issues! 📝"];return j[Math.floor(Math.random()*j.length)]}
+ if(/good (girl|dog)|love you|cute|best/.test(s))return "Aww, thank you Abi! *wags tail so hard I fall over* 🥰";
+ if(/what time|time now|date/.test(s))return "It's "+new Date().toLocaleString([], {weekday:'long',hour:'numeric',minute:'2-digit',day:'numeric',month:'short'})+" ⏰";
+ if(/sleep|rest|water|health|eat|walk/.test(s))return "Take care of yourself first! 💧 Drink water, stretch every hour, sleep 7 to 8 hours. A rested human finishes tasks faster. Want me to add 'drink water' as a task?";
+ if(/study|exam|learn|revision|homework|assignment/.test(s))return "Study plan:\n1. Pick one subject\n2. 25 minutes focus, 5 minutes break\n3. Write what you learned in 2 lines\n4. Reward yourself\nTry: 'add revise chapter 1 in 25 minutes' and I'll start the clock!";
+ if(/help|what can you|commands/.test(s))return "I can:\n• add tasks: 'add buy milk in 30 minutes'\n• tell what to do first\n• plan your day\n• check overdue tasks\n• cheer you up when stuck\n• show progress\n• tell jokes 🐶\nFor any other question, type /key YOUR_API_KEY.";
  if(/\b(hi|hello|hey)\b/.test(s))return "Woof! Hi Abi! 🐶 Ask me what to do first, to plan your day, or for help when you're stuck.";
  if(/overdue|late|missed/.test(s))return late.length?`Oops, these are past due:\n${late.map(L).join('\n')}\n\nPick the smallest one and finish it in 10 minutes. Then re-add the rest with new times.`:"Nothing is overdue. Good human! 🦴";
  if(/first|next|priority|start|what.*(do|now)/.test(s))return act.length?`Do this first: "${act[0].title}"\n${L(act[0])}\nIt is your most important and urgent one. Give it 25 focused minutes!`:"All clear! Maybe a walk to celebrate? 🐾";
@@ -250,7 +261,7 @@ function brain(q){const s=q.toLowerCase(),now=Date.now(),act=tasks.filter(t=>!t.
  if(/break|split|big|overwhelm|too much|many/.test(s))return "Big tasks feel scary. Split them:\n1. Write the first tiny step\n2. Add each step as its own task with a short timer\n3. Finish the easiest step first\nAsk me to 'plan my day' when you're ready.";
  if(/focus|pomodoro|timer/.test(s))return "Focus recipe: 25 minutes work, 5 minutes break, repeat 4 times, then a longer break. Add a 25-minute task and I'll watch the clock!";
  if(/status|how am i|progress|done/.test(s)){const d=tasks.filter(t=>t.done).length;return `You finished ${d} of ${tasks.length} tasks, ${act.length} left, ${meta.streak}-day streak. ${d?'Proud of you!':"Let's get the first one done!"} 🐶`}
- return "I can help with: what to do first, plan my day, overdue tasks, I'm stuck, breaking down a big task, or my progress. 🐾\nTip: type /key YOUR_API_KEY to switch on my AI brain for any question.";}
+ return "Hmm, I'm only a puppy, so I didn't understand that one 🐶\nTry: 'add call mom in 30 minutes', 'plan my day', 'I am stuck' or 'tell me a joke'. For any question at all, switch on my AI brain with /key YOUR_API_KEY.";}
 async function askAI(k){const ctx=tasks.map(t=>`${t.done?'[done]':'[open]'} ${t.title}, due ${new Date(t.due).toLocaleString()}, priority ${t.pri}/3`).join('\n');
  const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:"You are Lilly, a cheerful golden retriever puppy and Abi's to-do buddy. Reply warmly in under 90 words, practical, with an occasional woof. Now: "+new Date().toLocaleString()+". Abi's tasks:\n"+ctx,messages:hist})});
  const d=await r.json();if(!r.ok)throw new Error((d.error&&d.error.message)||'request failed');return d.content.map(c=>c.text||'').join('')}
