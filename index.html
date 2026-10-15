@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="abi to do">
+<meta name="theme-color" content="#160f26">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<title>abi to do</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@1,9..144,600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f4effb;--bg2:#e6dcf7;--card:rgba(255,255,255,.72);--ink:#231638;--mute:#6d5f88;--line:rgba(35,22,56,.1);--orchid:#8a4dff;--mint:#12b886;--sun:#e8a100;--rose:#e8336d;--glass:rgba(255,255,255,.6);color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#160f26;--bg2:#241442;--card:rgba(255,255,255,.07);--ink:#f3ecff;--mute:#a597c4;--line:rgba(255,255,255,.1);--orchid:#b583ff;--mint:#5ef2c0;--sun:#ffcf5a;--rose:#ff5c8a;--glass:rgba(255,255,255,.08);color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#160f26;--bg2:#241442;--card:rgba(255,255,255,.07);--ink:#f3ecff;--mute:#a597c4;--line:rgba(255,255,255,.1);--orchid:#b583ff;--mint:#5ef2c0;--sun:#ffcf5a;--rose:#ff5c8a;--glass:rgba(255,255,255,.08);color-scheme:dark}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{background:radial-gradient(120% 60% at 80% -10%,var(--bg2),var(--bg) 60%) fixed;color:var(--ink);font:500 16px/1.4 Outfit,system-ui,sans-serif;overflow-x:hidden}
+.app{max-width:520px;margin:0 auto;padding:18px 18px 130px}
+header{display:flex;justify-content:space-between;align-items:center}
+.logo{font:italic 600 34px/1 Fraunces,Georgia,serif;letter-spacing:-.5px;background:linear-gradient(100deg,var(--orchid),var(--rose) 60%,var(--sun));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sub{color:var(--mute);font-size:13px;margin-top:4px}
+.ib{width:42px;height:42px;border-radius:50%;border:1px solid var(--line);background:var(--glass);color:var(--ink);font-size:18px;cursor:pointer;backdrop-filter:blur(10px)}
+.ib:active{transform:scale(.9)}
+/* tide orb */
+.hero{display:flex;flex-direction:column;align-items:center;margin:22px 0 8px}
+.orb{position:relative;width:236px;height:236px;border-radius:50%;overflow:hidden;border:1px solid var(--line);background:var(--glass);box-shadow:0 20px 60px -20px var(--orchid),inset 0 0 40px rgba(255,255,255,.06);cursor:pointer;transition:transform .3s}
+.orb:active{transform:scale(.96)}
+.tide{position:absolute;left:-50%;width:200%;height:200%;top:100%;transition:top 1.2s cubic-bezier(.3,1.3,.5,1)}
+.tide i{position:absolute;inset:0;border-radius:42%;background:linear-gradient(var(--orchid),var(--rose));opacity:.55;animation:spin 9s linear infinite}
+.tide i+i{border-radius:38%;opacity:.4;background:linear-gradient(var(--mint),var(--orchid));animation-duration:13s;animation-direction:reverse}
+@keyframes spin{to{transform:rotate(360deg)}}
+.orbtxt{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:30px;gap:4px}
+.big{font:italic 600 40px/1 Fraunces,Georgia,serif;font-variant-numeric:tabular-nums}
+.orbtxt small{color:var(--mute);font-size:13px;max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.orb.late{animation:throb 1.2s ease-in-out infinite}
+@keyframes throb{50%{box-shadow:0 0 0 12px rgba(255,92,138,.18),0 20px 60px -10px var(--rose)}}
+.stats{display:flex;gap:10px;margin-top:16px;color:var(--mute);font-size:13px}
+.stats b{color:var(--ink)}
+.chips{display:flex;gap:8px;margin:18px 0 12px}
+.chip{padding:8px 16px;border-radius:99px;border:1px solid var(--line);background:transparent;color:var(--mute);font:inherit;font-size:14px;cursor:pointer;transition:.25s}
+.chip.on{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+/* cards */
+.t{position:relative;display:flex;align-items:center;gap:12px;padding:12px 14px 12px 12px;margin-bottom:10px;border-radius:22px;background:var(--card);border:1px solid var(--line);backdrop-filter:blur(12px);transition:transform .35s cubic-bezier(.3,1.4,.5,1),opacity .35s,height .35s;touch-action:pan-y}
+.t.pop{animation:pop .5s cubic-bezier(.3,1.5,.5,1)}
+@keyframes pop{from{transform:scale(.85) translateY(14px);opacity:0}}
+.t.out{transform:translateX(110%) rotate(6deg);opacity:0}
+.t.done .tt{text-decoration:line-through;color:var(--mute)}
+.t.late{border-color:var(--rose)}
+.rw{position:relative;width:46px;height:46px;flex:none}
+.rw svg{width:46px;height:46px;transform:rotate(-90deg)}
+.rw circle{fill:none;stroke-width:4;stroke-linecap:round}
+.rw .bg{stroke:var(--line)}
+.rw .fg{transition:stroke-dashoffset 1s linear,stroke .5s}
+.ck{position:absolute;inset:7px;border-radius:50%;border:2px solid var(--mute);background:transparent;color:transparent;font-size:15px;cursor:pointer;display:grid;place-items:center;transition:.3s}
+.t.done .ck{background:var(--mint);border-color:var(--mint);color:#08231a;transform:scale(1.05)}
+.ck:active{transform:scale(.8)}
+.mid{flex:1;min-width:0}
+.tt{font-size:16px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.mt{font-size:12.5px;color:var(--mute);margin-top:2px;font-variant-numeric:tabular-nums}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.del{border:0;background:none;color:var(--mute);font-size:20px;cursor:pointer;padding:6px}
+.empty{text-align:center;color:var(--mute);padding:36px 20px}
+.empty span{font-size:40px;display:block;margin-bottom:6px}
+/* fab + sheet */
+.fab{position:fixed;right:20px;bottom:calc(22px + env(safe-area-inset-bottom,0px));width:64px;height:64px;border-radius:24px;border:0;background:linear-gradient(135deg,var(--orchid),var(--rose));color:#fff;font-size:34px;cursor:pointer;box-shadow:0 14px 30px -8px var(--rose);transition:transform .3s cubic-bezier(.3,1.6,.5,1);z-index:5}
+.fab:active{transform:scale(.88) rotate(90deg)}
+.shade{position:fixed;inset:0;background:rgba(10,5,20,.5);opacity:0;pointer-events:none;transition:.3s;z-index:6}
+.shade.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;max-width:520px;margin:0 auto;background:var(--bg);border:1px solid var(--line);border-radius:30px 30px 0 0;padding:22px 20px calc(24px + env(safe-area-inset-bottom,0px));transform:translateY(105%);transition:transform .5s cubic-bezier(.2,1.1,.3,1);z-index:7}
+.sheet.on{transform:none}
+.sheet h3{margin:0 0 12px;font:italic 600 24px Fraunces,Georgia,serif}
+.in{width:100%;padding:14px 16px;border-radius:16px;border:1px solid var(--line);background:var(--glass);color:var(--ink);font:inherit;font-size:17px;outline:none}
+.in:focus{border-color:var(--orchid);box-shadow:0 0 0 3px color-mix(in srgb,var(--orchid) 25%,transparent)}
+.lbl{font-size:13px;color:var(--mute);margin:14px 0 6px}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row .chip.on{background:var(--orchid);border-color:var(--orchid);color:#fff}
+.go{width:100%;margin-top:18px;padding:15px;border:0;border-radius:18px;background:linear-gradient(135deg,var(--orchid),var(--rose));color:#fff;font:600 17px Outfit,sans-serif;cursor:pointer}
+.go:active{transform:scale(.97)}
+/* toast */
+#toasts{position:fixed;top:calc(12px + env(safe-area-inset-top,0px));left:12px;right:12px;max-width:496px;margin:0 auto;z-index:20;display:flex;flex-direction:column;gap:8px;pointer-events:none}
+.toast{pointer-events:auto;padding:14px 16px;border-radius:18px;background:var(--ink);color:var(--bg);box-shadow:0 14px 40px rgba(0,0,0,.35);animation:drop .5s cubic-bezier(.3,1.5,.5,1)}
+.toast b{display:block}
+@keyframes drop{from{transform:translateY(-120%)}}
+.bell{display:none;margin:14px 0 0;width:100%;padding:12px;border-radius:16px;border:1px dashed var(--orchid);background:transparent;color:var(--ink);font:inherit;font-size:14px;cursor:pointer}
+.p{position:fixed;width:8px;height:8px;border-radius:50%;pointer-events:none;z-index:30}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01s!important;transition-duration:.01s!important}}
+
+#lilly{position:fixed;left:8px;bottom:calc(14px + env(safe-area-inset-bottom,0px));z-index:15;display:flex;align-items:flex-end;gap:4px;pointer-events:none;transform:translateX(-150%);transition:transform .6s cubic-bezier(.3,1.4,.5,1)}
+#lilly.on{transform:none}
+#lilly .dog{width:96px;height:88px;flex:none;animation:hop .55s ease-in-out infinite}
+#lilly .dog svg,.av svg{width:100%;height:100%;overflow:visible}
+@keyframes hop{50%{transform:translateY(-16px) rotate(-4deg)}}
+#lilly.alert .dog{animation-duration:.28s}
+.tail{transform-origin:92px 78px;animation:wag .22s ease-in-out infinite alternate}
+@keyframes wag{from{transform:rotate(-18deg)}to{transform:rotate(22deg)}}
+.ear.l{transform-origin:30px 24px;animation:ear 1s ease-in-out infinite alternate}
+.ear.r{transform-origin:90px 24px;animation:ear 1s ease-in-out infinite alternate-reverse}
+@keyframes ear{from{transform:rotate(-6deg)}to{transform:rotate(9deg)}}
+.tongue{transform-origin:60px 66px;animation:pant .4s ease-in-out infinite alternate}
+@keyframes pant{to{transform:scaleY(1.25)}}
+.bub{max-width:175px;padding:10px 14px;border-radius:18px 18px 18px 4px;background:var(--ink);color:var(--bg);font-size:14px;margin-bottom:48px;box-shadow:0 12px 30px rgba(0,0,0,.35)}
+#lilly.alert .bub{background:var(--rose);color:#fff}
+#chat{position:fixed;inset:0;max-width:520px;margin:0 auto;background:var(--bg);z-index:25;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .5s cubic-bezier(.2,1.1,.3,1);padding-top:env(safe-area-inset-top,0px)}
+#chat.on{transform:none}
+.ch{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
+.ch .av{width:48px;height:44px}.ch b{font:italic 600 22px Fraunces,Georgia,serif;display:block;line-height:1}.ch small{color:var(--mute)}
+#msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+.m{max-width:85%;padding:10px 14px;border-radius:18px;white-space:pre-wrap;animation:pop .35s}
+.m.l{background:var(--card);border:1px solid var(--line);border-bottom-left-radius:4px}
+.m.u{align-self:flex-end;background:linear-gradient(135deg,var(--orchid),var(--rose));color:#fff;border-bottom-right-radius:4px}
+.qs{display:flex;gap:6px;overflow-x:auto;padding:0 16px 8px}.qs .chip{white-space:nowrap}
+.cin{display:flex;gap:8px;padding:6px 16px calc(12px + env(safe-area-inset-bottom,0px))}
+.cin .go{width:auto;margin:0;padding:0 20px}
+.hb{display:flex;gap:8px}
+</style>
+</head>
+<body>
+<div id="toasts"></div>
+<div id="lilly"><div class="dog"></div><div class="bub" id="lb"></div></div>
+<div id="chat"><div class="ch"><div class="av"></div><div style="flex:1"><b>Lilly</b><small>your to-do buddy</small></div><button class="ib" id="cx" aria-label="Close">×</button></div>
+<div id="msgs"></div><div class="qs" id="qs"></div>
+<div class="cin"><input class="in" id="cq" placeholder="Ask Lilly anything…" autocomplete="off"><button class="go" id="cs">Send</button></div></div>
+<div class="app">
+  <header>
+    <div><div class="logo">abi to do</div><div class="sub" id="date"></div></div>
+    <div class="hb"><button class="ib" id="chatbtn" aria-label="Chat with Lilly">🐶</button><button class="ib" id="theme" aria-label="Switch theme">◐</button></div>
+  </header>
+  <button class="bell" id="bell">🔔 Turn on reminders for this phone</button>
+  <section class="hero">
+    <div class="orb" id="orb" title="Tap to refresh">
+      <div class="tide" id="tide"><i></i><i></i></div>
+      <div class="orbtxt"><div class="big" id="big">0%</div><small id="osub">Add your first task</small></div>
+    </div>
+    <div class="stats"><span><b id="sa">0</b> left</span><span><b id="sd">0</b> done</span><span><b id="ss">0</b> day streak</span></div>
+  </section>
+  <div class="chips" id="filters">
+    <button class="chip on" data-f="active">Active</button><button class="chip" data-f="done">Done</button><button class="chip" data-f="all">All</button>
+  </div>
+  <div id="list"></div>
+</div>
+<button class="fab" id="fab" aria-label="Add task">+</button>
+<div class="shade" id="shade"></div>
+<div class="sheet" id="sheet">
+  <h3>New task</h3>
+  <input class="in" id="title" placeholder="What needs doing?" maxlength="80" autocomplete="off">
+  <div class="lbl">Finish within</div>
+  <div class="row" id="dur">
+    <button class="chip" data-m="15">15 min</button><button class="chip on" data-m="60">1 hour</button><button class="chip" data-m="180">3 hours</button><button class="chip" data-m="480">8 hours</button><button class="chip" data-m="1440">Tomorrow</button>
+  </div>
+  <div class="lbl">Or pick an exact time</div>
+  <input class="in" type="datetime-local" id="when">
+  <div class="lbl">Priority</div>
+  <div class="row" id="pri">
+    <button class="chip" data-p="1">Chill</button><button class="chip on" data-p="2">Normal</button><button class="chip" data-p="3">Urgent</button>
+  </div>
+  <button class="go" id="save">Start the clock</button>
+</div>
+<script>
+const $=s=>document.querySelector(s),KEY='abi-todo-v1';
+let tasks=[],meta={streak:0,last:''},filter='active',dur=60,pri=2,fresh=null;
+try{const d=JSON.parse(localStorage.getItem(KEY)||'{}');tasks=d.tasks||[];meta=d.meta||meta}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify({tasks,meta}))}catch(e){}};
+const PC={1:'var(--mint)',2:'var(--sun)',3:'var(--rose)'},C=2*Math.PI*19;
+const fmt=ms=>{const a=Math.abs(ms),s=Math.floor(a/1000)%60,m=Math.floor(a/60000)%60,h=Math.floor(a/3600000);return h?`${h}h ${m}m`:m?`${m}m ${String(s).padStart(2,'0')}s`:`${s}s`};
+const clock=t=>new Date(t).toLocaleString([], {weekday:'short',hour:'numeric',minute:'2-digit'});
+const day=()=>new Date().toDateString();
+$('#date').textContent=new Date().toLocaleDateString([], {weekday:'long',day:'numeric',month:'long'});
+/* sound + notifications */
+let ac;function beep(){try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();[660,880,1100].forEach((f,i)=>{const o=ac.createOscillator(),g=ac.createGain();o.frequency.value=f;o.connect(g);g.connect(ac.destination);const t=ac.currentTime+i*.14;g.gain.setValueAtTime(.15,t);g.gain.exponentialRampToValueAtTime(.001,t+.3);o.start(t);o.stop(t+.3)})}catch(e){}}
+function toast(h,b){const e=document.createElement('div');e.className='toast';e.innerHTML=`<b>${h}</b>${b}`;$('#toasts').appendChild(e);setTimeout(()=>{e.style.transition='.4s';e.style.opacity=0;setTimeout(()=>e.remove(),400)},7000)}
+function notify(h,b){lillySay(h+' '+b,'alert');beep();try{navigator.vibrate&&navigator.vibrate([200,100,200])}catch(e){}
+ try{if('Notification' in window&&Notification.permission==='granted'){const o={body:b,icon:'icon-192.png',tag:h+b};if(navigator.serviceWorker&&navigator.serviceWorker.controller)navigator.serviceWorker.ready.then(r=>r.showNotification(h,o));else new Notification(h,o)}}catch(e){}}
+function bellState(){try{$('#bell').style.display=('Notification' in window&&Notification.permission==='default')?'block':'none'}catch(e){}}
+$('#bell').onclick=async()=>{try{await Notification.requestPermission()}catch(e){}bellState();toast('Reminders on','abi to do will nudge you before every deadline.')};
+/* render */
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function render(){
+ const list=tasks.filter(t=>filter==='all'||(filter==='done')===t.done).sort((a,b)=>a.done-b.done||a.due-b.due);
+ $('#list').innerHTML=list.length?list.map(t=>`<div class="t${t.done?' done':''}${t.id===fresh?' pop':''}" data-id="${t.id}">
+  <div class="rw"><svg viewBox="0 0 46 46"><circle class="bg" cx="23" cy="23" r="19"/><circle class="fg" cx="23" cy="23" r="19" stroke-dasharray="${C}" stroke-dashoffset="0" stroke="${PC[t.pri]}"/></svg><button class="ck" data-a="ck" aria-label="Complete">✓</button></div>
+  <div class="mid"><div class="tt">${esc(t.title)}</div><div class="mt"><span class="dot" style="background:${PC[t.pri]}"></span><span class="left"></span> · ${clock(t.due)}</div></div>
+  <button class="del" data-a="del" aria-label="Delete">×</button></div>`).join(''):`<div class="empty"><span>${filter==='done'?'🌱':'🫧'}</span>${filter==='done'?'Nothing finished yet. Go get one.':'Clear skies. Tap + to add a task.'}</div>`;
+ fresh=null;tick();
+}
+function tick(){
+ const now=Date.now();
+ document.querySelectorAll('.t').forEach(el=>{const t=tasks.find(x=>x.id==el.dataset.id);if(!t)return;
+  const l=el.querySelector('.left'),fg=el.querySelector('.fg');
+  if(t.done){l.textContent='Done';fg.style.strokeDashoffset=0;fg.style.stroke='var(--mint)';el.classList.remove('late');return}
+  const r=t.due-now,f=Math.max(0,Math.min(1,r/(t.due-t.start)));
+  fg.style.strokeDashoffset=C*(1-f);el.classList.toggle('late',r<0);
+  l.textContent=r<0?`${fmt(r)} overdue`:`${fmt(r)} left`;l.style.color=r<0?'var(--rose)':''});
+ tasks.forEach(t=>{if(t.done)return;const r=t.due-now,m=t.due-t.start;
+  if(!t.n1&&r<=300000&&r>0&&m>600000){t.n1=1;save();notify('⏳ 5 minutes left',t.title)}
+  if(!t.n2&&r<=0){t.n2=1;save();notify('⏰ Time is up',t.title)}});
+ const act=tasks.filter(t=>!t.done),dn=tasks.filter(t=>t.done).length,tot=tasks.length;
+ const pct=tot?Math.round(dn/tot*100):0,nx=act.sort((a,b)=>a.due-b.due)[0];
+ $('#tide').style.top=(100-pct*.9)+'%';
+ $('#sa').textContent=act.length;$('#sd').textContent=dn;$('#ss').textContent=meta.streak;
+ const o=$('#orb');
+ if(nx){const r=nx.due-now;$('#big').textContent=fmt(r);$('#osub').textContent=(r<0?'Overdue: ':'Next: ')+nx.title;o.classList.toggle('late',r<0)}
+ else{$('#big').textContent=tot?'All done':'0%';$('#osub').textContent=tot?'You cleared everything ✨':'Add your first task';o.classList.remove('late')}
+}
+setInterval(tick,1000);
+/* actions */
+function burst(el){const r=el.getBoundingClientRect(),x=r.left+30,y=r.top+r.height/2,cols=['#b583ff','#ff5c8a','#5ef2c0','#ffcf5a'];
+ for(let i=0;i<22;i++){const p=document.createElement('i');p.className='p';p.style.cssText=`left:${x}px;top:${y}px;background:${cols[i%4]}`;document.body.appendChild(p);
+  const a=Math.random()*6.28,d=50+Math.random()*90;p.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d+30}px) scale(0)`,opacity:0}],{duration:700+Math.random()*400,easing:'cubic-bezier(.2,.8,.3,1)'}).onfinish=()=>p.remove()}}
+$('#list').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;const el=b.closest('.t'),t=tasks.find(x=>x.id==el.dataset.id);
+ if(b.dataset.a==='ck'){t.done=!t.done;if(t.done){burst(el);lillySay(PRAISE[Math.floor(Math.random()*PRAISE.length)],'happy');try{navigator.vibrate&&navigator.vibrate(30)}catch(e){}
+   if(meta.last!==day()){const y=new Date(Date.now()-864e5).toDateString();meta.streak=meta.last===y?meta.streak+1:1;meta.last=day()}}
+  save();if(t.done&&filter==='active'){setTimeout(()=>{el.classList.add('out');setTimeout(render,350)},450);tick()}else render()}
+ else{el.classList.add('out');setTimeout(()=>{tasks=tasks.filter(x=>x!==t);save();render()},350)}};
+$('#filters').onclick=e=>{const b=e.target.closest('.chip');if(!b)return;filter=b.dataset.f;document.querySelectorAll('#filters .chip').forEach(c=>c.classList.toggle('on',c===b));render()};
+function pick(box,fn){$(box).onclick=e=>{const b=e.target.closest('.chip');if(!b)return;document.querySelectorAll(box+' .chip').forEach(c=>c.classList.toggle('on',c===b));fn(b);if(box==='#dur')$('#when').value=''}}
+pick('#dur',b=>dur=+b.dataset.m);pick('#pri',b=>pri=+b.dataset.p);
+const open=v=>{$('#sheet').classList.toggle('on',v);$('#shade').classList.toggle('on',v);if(v)setTimeout(()=>$('#title').focus(),350)};
+$('#fab').onclick=()=>{try{if('Notification' in window&&Notification.permission==='default')Notification.requestPermission().then(bellState)}catch(e){}open(true)};
+$('#shade').onclick=()=>open(false);
+$('#save').onclick=()=>{const title=$('#title').value.trim();if(!title){$('#title').focus();return}
+ const w=$('#when').value,start=Date.now(),due=w?new Date(w).getTime():start+dur*60000;
+ if(due<=start){toast('Pick a future time','The deadline has to be after right now.');return}
+ const t={id:start,title,start,due,pri,done:false};tasks.push(t);fresh=t.id;save();$('#title').value='';$('#when').value='';open(false);filter='active';
+ document.querySelectorAll('#filters .chip').forEach(c=>c.classList.toggle('on',c.dataset.f==='active'));render()};
+$('#title').onkeydown=e=>{if(e.key==='Enter')$('#save').click()};
+$('#theme').onclick=()=>{const r=document.documentElement,d=getComputedStyle(r).colorScheme==='dark';r.dataset.theme=d?'light':'dark';try{localStorage.setItem('abi-theme',r.dataset.theme)}catch(e){}};
+try{const th=localStorage.getItem('abi-theme');if(th)document.documentElement.dataset.theme=th}catch(e){}
+$('#orb').onclick=()=>{tick();const n=tasks.filter(t=>!t.done).length;toast(n?`${n} task${n>1?'s':''} waiting`:'Nothing pending',n?'Stay on it, you have this.':'Enjoy the quiet.')};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)tick()});
+
+const DOG=`<svg viewBox="0 0 120 110"><g class="tail"><path d="M92 78 Q112 62 104 44" stroke="#c98a45" stroke-width="9" fill="none" stroke-linecap="round"/></g><ellipse cx="60" cy="88" rx="32" ry="20" fill="#e8b36a"/><ellipse class="ear l" cx="30" cy="40" rx="11" ry="22" fill="#8a5a2b"/><ellipse class="ear r" cx="90" cy="40" rx="11" ry="22" fill="#8a5a2b"/><circle cx="60" cy="50" r="30" fill="#f0c283"/><ellipse cx="60" cy="62" rx="15" ry="11" fill="#fff4e0"/><circle cx="48" cy="46" r="4.5" fill="#2b1a0c"/><circle cx="72" cy="46" r="4.5" fill="#2b1a0c"/><circle cx="49.5" cy="44.5" r="1.4" fill="#fff"/><circle cx="73.5" cy="44.5" r="1.4" fill="#fff"/><ellipse cx="60" cy="57" rx="6" ry="4.5" fill="#2b1a0c"/><path class="tongue" d="M55 66 Q60 80 65 66Z" fill="#ff7a9a"/><path d="M52 64 Q60 70 68 64" stroke="#2b1a0c" stroke-width="2" fill="none" stroke-linecap="round"/><circle cx="36" cy="58" r="5" fill="#ff9db4" opacity=".5"/><circle cx="84" cy="58" r="5" fill="#ff9db4" opacity=".5"/></svg>`;
+document.querySelector('#lilly .dog').innerHTML=DOG;document.querySelector('.ch .av').innerHTML=DOG;
+const PRAISE=['Woof woof! You did it! 🎉','Amazing, Abi! I am so proud! 🐾','Task crushed! Treat time! 🦴','Yay yay yay! Keep going! ⭐','Good human! Tail wags for you! 🐶'];
+let lt;function lillySay(t,mood){const L=$('#lilly');$('#lb').textContent=t;L.className='on '+(mood||'');clearTimeout(lt);lt=setTimeout(()=>L.className='',mood==='alert'?9000:4500)}
+if(!sessionStorage.getItem('hi')){try{sessionStorage.setItem('hi',1)}catch(e){}setTimeout(()=>lillySay("Woof! I'm Lilly 🐶 I'll remind you and cheer you on!",'happy'),1200)}
+/* chat */
+const hist=[];
+function addM(t,c){const e=document.createElement('div');e.className='m '+c;e.textContent=t;$('#msgs').appendChild(e);$('#msgs').scrollTop=1e9;return e}
+function brain(q){const s=q.toLowerCase(),now=Date.now(),act=tasks.filter(t=>!t.done).sort((a,b)=>b.pri-a.pri||a.due-b.due),late=act.filter(t=>t.due<now),L=t=>`• ${t.title} (${fmt(t.due-now)}${t.due<now?' overdue':' left'})`;
+ if(/\b(hi|hello|hey)\b/.test(s))return "Woof! Hi Abi! 🐶 Ask me what to do first, to plan your day, or for help when you're stuck.";
+ if(/overdue|late|missed/.test(s))return late.length?`Oops, these are past due:\n${late.map(L).join('\n')}\n\nPick the smallest one and finish it in 10 minutes. Then re-add the rest with new times.`:"Nothing is overdue. Good human! 🦴";
+ if(/first|next|priority|start|what.*(do|now)/.test(s))return act.length?`Do this first: "${act[0].title}"\n${L(act[0])}\nIt is your most important and urgent one. Give it 25 focused minutes!`:"All clear! Maybe a walk to celebrate? 🐾";
+ if(/plan|schedule|day|today/.test(s)){const o=[...act].sort((a,b)=>a.due-b.due);return o.length?`My plan, in deadline order:\n${o.map(L).join('\n')}\n\nWork in 25-minute bursts with 5-minute breaks.`:"Nothing to plan yet. Tap + and add something!"}
+ if(/stuck|lazy|procrast|motivat|tired|bored|can't|cant|hard/.test(s))return "Try the 5-minute trick: promise just 5 minutes on the task. Starting is the hardest part, and I'll cheer the whole time. Woof! 🐾 Also: phone away, water nearby.";
+ if(/break|split|big|overwhelm|too much|many/.test(s))return "Big tasks feel scary. Split them:\n1. Write the first tiny step\n2. Add each step as its own task with a short timer\n3. Finish the easiest step first\nAsk me to 'plan my day' when you're ready.";
+ if(/focus|pomodoro|timer/.test(s))return "Focus recipe: 25 minutes work, 5 minutes break, repeat 4 times, then a longer break. Add a 25-minute task and I'll watch the clock!";
+ if(/status|how am i|progress|done/.test(s)){const d=tasks.filter(t=>t.done).length;return `You finished ${d} of ${tasks.length} tasks, ${act.length} left, ${meta.streak}-day streak. ${d?'Proud of you!':"Let's get the first one done!"} 🐶`}
+ return "I can help with: what to do first, plan my day, overdue tasks, I'm stuck, breaking down a big task, or my progress. 🐾\nTip: type /key YOUR_API_KEY to switch on my AI brain for any question.";}
+async function askAI(k){const ctx=tasks.map(t=>`${t.done?'[done]':'[open]'} ${t.title}, due ${new Date(t.due).toLocaleString()}, priority ${t.pri}/3`).join('\n');
+ const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:400,system:"You are Lilly, a cheerful golden retriever puppy and Abi's to-do buddy. Reply warmly in under 90 words, practical, with an occasional woof. Now: "+new Date().toLocaleString()+". Abi's tasks:\n"+ctx,messages:hist})});
+ const d=await r.json();if(!r.ok)throw new Error((d.error&&d.error.message)||'request failed');return d.content.map(c=>c.text||'').join('')}
+async function send(q){q=q.trim();if(!q)return;addM(q,'u');$('#cq').value='';
+ if(q.startsWith('/key')){const k=q.slice(4).trim();try{if(k&&k!=='off'){localStorage.setItem('abi-key',k);addM("Woof! AI mode is on. I'm much smarter now 🐾",'l')}else{localStorage.removeItem('abi-key');addM('AI mode off. Back to my built-in brain.','l')}}catch(e){}return}
+ let k=null;try{k=localStorage.getItem('abi-key')}catch(e){}
+ const w=addM('…','l');
+ if(k){hist.push({role:'user',content:q});try{const a=await askAI(k);hist.push({role:'assistant',content:a});if(hist.length>12)hist.splice(0,2);w.textContent=a}catch(e){hist.pop();w.textContent=brain(q)+'\n\n(AI mode failed: '+e.message+')'}}
+ else setTimeout(()=>{w.textContent=brain(q);$('#msgs').scrollTop=1e9},500)}
+$('#qs').innerHTML=['What should I do first?','Plan my day','I am stuck','Overdue tasks','My progress'].map(x=>`<button class="chip">${x}</button>`).join('');
+$('#qs').onclick=e=>{if(e.target.classList.contains('chip'))send(e.target.textContent)};
+$('#cs').onclick=()=>send($('#cq').value);$('#cq').onkeydown=e=>{if(e.key==='Enter')send($('#cq').value)};
+$('#chatbtn').onclick=()=>{$('#chat').classList.add('on');if(!$('#msgs').children.length)addM("Woof! I'm Lilly 🐶 Ask me what to do first, plan your day, or tell me what's stuck.",'l')};
+$('#cx').onclick=()=>$('#chat').classList.remove('on');
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').catch(()=>{});
+bellState();render();
+</script>
+</body>
+</html>
